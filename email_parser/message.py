@@ -4,7 +4,9 @@ from email.utils import parsedate_tz
 
 __all__ = [
     'Person',
-    'EmailMessage',
+    'Message',
+    'OutgoingMessage',
+    'IncomingMessage'
 ]
 
 
@@ -29,20 +31,33 @@ class Person(object):
         return ('<Person email=%s, name=%s>' % (self.email, self.name))
 
 
-class EmailMessage(object):
-    def __init__(self, uid, headers, text_body=None, html_body=None,
-                 read=False):
+class Message(object):
+    uid = None
+    subject = None
+    sender = None
+    receiver = None
+
+    text_body = None
+    html_body = None
+
+    # Misc metadata and fields
+    read = None
+    message_id = None
+    in_reply_to = None
+
+    headers = {}
+
+    def __init__(self, uid, subject, sender, receiver, headers, read=None,
+                 text_body=None, html_body=None):
         self.uid = uid
-        self.subject = headers.get('Subject', None)
-        self.date = headers.get('Date', None)
-        self.text_body = text_body
-        self.html_body = html_body
+        self.subject = subject
+        self.sender = sender
+        self.receiver = receiver
+        self.headers = headers
         self.read = read
 
-        if headers.get('From', None):
-            self.sender = Person.from_string(headers['From'])
-        else:
-            self.sender = None
+        self.text_body = text_body
+        self.html_body = html_body
 
         if headers.get('Date', None):
             self.date = parsedate_tz(headers['Date'])
@@ -50,21 +65,6 @@ class EmailMessage(object):
             self.date = None
 
         self.headers = headers
-
-    def get_unsubscribe_link(self):
-        list_unsubscribe = self.headers.get('List-Unsubscribe', None)
-
-        if not list_unsubscribe:
-            return None
-
-        values = list_unsubscribe.strip().replace('<', '').replace('>', '').split(',')
-
-        for value in values:
-            if value.startswith('http://') or value.startswith('https://'):
-                url = value.replace('<', '').replace('>', '').strip()
-                return url
-
-        return None
 
     def __str__(self):
         if self.sender:
@@ -74,3 +74,33 @@ class EmailMessage(object):
 
         return ('<Message uid=%s, subject="%s", sender=%s>' %
                 (self.uid, self.subject, sender))
+
+
+class IncomingMessage(Message):
+    date_sent = None
+    date_received = None
+
+    spf_signature = None
+    dkim_signature = None
+
+    valid_dkim_signature = None
+    valid_spf_signature = None
+
+    def __init__(self, *args, **kwargs):
+        self.date_sent = kwargs.pop('date_sent')
+        self.date_received = kwargs.pop('date_received')
+
+        self.spf_signature = kwargs.pop('spf_signature')
+        self.dkim_signature = kwargs.pop('dkim_signature')
+
+        self.valid_spf_signature = kwargs.pop('valid_spf_signature')
+        self.valid_dkim_signature = kwargs.pop('valid_dkim_signature')
+        super(IncomingMessage, self).__init__(*args, **kwargs)
+
+
+class OutgoingMessage(Message):
+    date_sent = None
+
+    def __init__(self, *args, **kwargs):
+        self.date_sent = kwargs.pop('date_sent')
+        super(OutgoingMessage, self).__init__(*args, **kwargs)

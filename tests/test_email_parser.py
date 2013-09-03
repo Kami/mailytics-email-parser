@@ -3,6 +3,7 @@ import sys
 import unittest
 
 from os.path import join as pjoin
+from email.utils import parsedate_tz
 
 from email_parser.message import Person
 from email_parser.parser import parse_raw_message
@@ -27,14 +28,23 @@ class EmailParserTestCase(unittest.TestCase):
             self.assertEqual(person.email, expected[1])
             self.assertEqual(person.name, expected[0])
 
-    def test_parse_raw_message_simple(self):
+    def test_parse_incoming_raw_message_simple(self):
         msg_data = self._get_fixture(name='addthis_weekly_analytics.txt')
-        message = parse_raw_message(msg_data)
+        message = parse_raw_message('incoming', msg_data)
 
         self.assertEqual(message.subject, 'Your Weekly AddThis Analytics')
         self.assertEqual(message.sender.email, 'support@addthis.com')
         self.assertEqual(message.sender.name, 'AddThis Team')
-        self.assertEqual(message.read, 'unknown')
+        self.assertEqual(message.receiver.email, 'tomaz+coachspree@tomaz.me')
+
+        self.assertEqual(message.date_sent,
+                         parsedate_tz('Sun, 18 Aug 2013 18:41:25 +0000'))
+        self.assertEqual(message.date_received,
+                         parsedate_tz('Sun, 18 Aug 2013 11:41:26 -0700 (PDT)'))
+
+        self.assertEqual(message.read, None)
+        self.assertTrue(message.valid_spf_signature)
+        self.assertTrue(message.valid_dkim_signature)
 
     def _get_fixture(self, name):
         fixture_path = pjoin(RAW_FIXTURES_DIR, name)
