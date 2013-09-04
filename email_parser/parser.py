@@ -5,6 +5,11 @@ from email.utils import parsedate_tz
 from email_parser.message import Person
 from email_parser.message import IncomingMessage, OutgoingMessage
 
+__all__ = [
+    'parse_message',
+    'parse_messages'
+]
+
 
 def get_message_text_and_html_part(message):
     payload = message.get_payload()
@@ -128,3 +133,9 @@ def parse_message(message_type, message_data):
         message = parse_raw_message(message_type, message_data)
 
     return message
+
+
+def parse_messages(message_type, messages_data):
+    for message_data in messages_data:
+        message = parse_message(message_type, message_data)
+        yield message
