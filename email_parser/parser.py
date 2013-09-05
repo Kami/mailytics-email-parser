@@ -1,14 +1,18 @@
+import re
 from imaplib import ParseFlags
 from email.parser import Parser
 from email.utils import parsedate_tz
 
 from email_parser.message import Person
+from email_parser.message import Mailbox
 from email_parser.message import IncomingMessage, OutgoingMessage
 
 __all__ = [
     'parse_message',
     'parse_messages'
 ]
+
+LIST_RESPONSE_RE = re.compile(r'\((?P<flags>.*?)\) "(?P<delimiter>.*)" (?P<name>.*)')
 
 
 def get_message_text_and_html_part(message):
@@ -139,3 +143,31 @@ def parse_messages(message_type, messages_data):
     for message_data in messages_data:
         message = parse_message(message_type, message_data)
         yield message
+
+
+def parse_mailbox(line):
+    """
+    Parse a raw data returned by conn.list() and return Mailbox object.
+
+    :param line: Single line from the conn.list() response.
+    :type line: ``str``
+    """
+    flags, delimiter, name = LIST_RESPONSE_RE.match(line).groups()
+    flags = flags.split(' ')
+    name = name.strip('"')
+
+    mailbox = Mailbox(name=name, flags=flags)
+    return mailbox
+
+
+def parse_mailboxes(data):
+    """
+    Parse a raw data returned by conn.list() and return a list of Mailbox
+    objects.
+
+    :param data: Raw mailbox data as returned by conn.list()
+    :type data: ``list``
+    """
+    for line in data:
+        mailbox = parse_mailbox(line)
+        yield mailbox

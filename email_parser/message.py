@@ -4,6 +4,8 @@ from email.utils import parsedate_tz
 
 __all__ = [
     'Person',
+    'Mailbox',
+
     'Message',
     'OutgoingMessage',
     'IncomingMessage'
@@ -29,6 +31,18 @@ class Person(object):
 
     def __str__(self):
         return ('<Person email=%s, name=%s>' % (self.email, self.name))
+
+
+class Mailbox(object):
+    name = None
+    flags = None
+
+    def __init__(self, name, flags):
+        self.name = name
+        self.flags = flags
+
+    def __str__(self):
+        return ('<Mailbox name=%s, flags=%s>' % (self.name, self.flags))
 
 
 class Message(object):

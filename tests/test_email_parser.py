@@ -7,13 +7,17 @@ from email.utils import parsedate_tz
 
 from email_parser.message import Person
 from email_parser.parser import parse_raw_message
+from email_parser.parser import parse_mailboxes
+from tests.base import BaseTestCase
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 FIXTURES_DIR = pjoin(CURRENT_DIR, 'fixtures/')
 RAW_FIXTURES_DIR = pjoin(FIXTURES_DIR, 'raw/')
 
 
-class EmailParserTestCase(unittest.TestCase):
+class EmailParserTestCase(BaseTestCase):
+    fixtures_dir = RAW_FIXTURES_DIR
+
     def test_person_from_string(self):
         values = (
             ('Tomaz Muraus <tomaz@tomaz.me>',
@@ -46,13 +50,18 @@ class EmailParserTestCase(unittest.TestCase):
         self.assertTrue(message.valid_spf_signature)
         self.assertTrue(message.valid_dkim_signature)
 
-    def _get_fixture(self, name):
-        fixture_path = pjoin(RAW_FIXTURES_DIR, name)
 
-        with open(fixture_path, 'r') as fp:
-            content = fp.read().strip()
+class MailboxParseTestCase(BaseTestCase):
+    fixtures_dir = pjoin(FIXTURES_DIR, 'imap/')
 
-        return content
+    def test_parse_mailboxes(self):
+        data = eval(self._get_fixture(name='conn.list_1.txt'))[1]
+        mailboxes = list(parse_mailboxes(data))
+
+        self.assertEqual(mailboxes[0].name, 'INBOX')
+        self.assertEqual(mailboxes[0].flags, ['\\HasNoChildren'])
+        self.assertEqual(mailboxes[6].name, '[Gmail]/Spam')
+        self.assertEqual(mailboxes[6].flags, ['\\HasNoChildren', '\\Junk'])
 
 
 if __name__ == '__main__':
