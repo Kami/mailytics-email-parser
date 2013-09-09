@@ -5,7 +5,7 @@ import unittest
 from os.path import join as pjoin
 from email.utils import parsedate_tz
 
-from email_parser.message import Person
+from email_parser.types import Person
 from email_parser.parser import parse_raw_message
 from email_parser.parser import parse_mailboxes
 from tests.base import BaseTestCase

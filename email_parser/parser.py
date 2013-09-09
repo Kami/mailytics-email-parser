@@ -3,9 +3,9 @@ from imaplib import ParseFlags
 from email.parser import Parser
 from email.utils import parsedate_tz
 
-from email_parser.message import Person
-from email_parser.message import Mailbox
-from email_parser.message import IncomingMessage, OutgoingMessage
+from email_parser.types import Person
+from email_parser.types import Mailbox
+from email_parser.types import IncomingMessage, OutgoingMessage
 
 __all__ = [
     'parse_message',
