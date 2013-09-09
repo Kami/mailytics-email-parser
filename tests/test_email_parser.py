@@ -39,7 +39,7 @@ class EmailParserTestCase(BaseTestCase):
         self.assertEqual(message.subject, 'Your Weekly AddThis Analytics')
         self.assertEqual(message.sender.email, 'support@addthis.com')
         self.assertEqual(message.sender.name, 'AddThis Team')
-        self.assertEqual(message.receiver.email, 'tomaz+coachspree@tomaz.me')
+        self.assertEqual(message.recipient.email, 'tomaz+coachspree@tomaz.me')
 
         self.assertEqual(message.date_sent,
                          parsedate_tz('Sun, 18 Aug 2013 18:41:25 +0000'))

@@ -49,7 +49,7 @@ class Message(object):
     uid = None
     subject = None
     sender = None
-    receiver = None
+    recipient = None
 
     text_body = None
     html_body = None
@@ -61,12 +61,12 @@ class Message(object):
 
     headers = {}
 
-    def __init__(self, uid, subject, sender, receiver, headers, read=None,
+    def __init__(self, uid, subject, sender, recipient, headers, read=None,
                  text_body=None, html_body=None):
         self.uid = uid
         self.subject = subject
         self.sender = sender
-        self.receiver = receiver
+        self.recipient = recipient
         self.headers = headers
         self.read = read
 

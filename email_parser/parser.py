@@ -44,13 +44,13 @@ def build_message(message_type, uid, message, flags=None):
 
     subject = headers.get('Subject', None)
     sender = headers.get('From', None)
-    receiver = headers.get('To', None)
+    recipient = headers.get('To', None)
 
     if sender:
         sender = Person.from_string(sender)
 
-    if receiver:
-        receiver = Person.from_string(receiver)
+    if recipient:
+        recipient = Person.from_string(recipient)
 
     date_sent = headers.get('Date', None)
     date_received = headers.get('X-Received', None)
@@ -79,7 +79,7 @@ def build_message(message_type, uid, message, flags=None):
         valid_dkim_signature = 'dkim=pass' in authentication_results
 
     kwargs = {'uid': uid, 'subject': subject, 'sender': sender,
-              'receiver': receiver, 'headers': headers, 'read': read,
+              'recipient': recipient, 'headers': headers, 'read': read,
               'text_body': text_body, 'html_body': html_body}
 
     if message_type == 'incoming':
