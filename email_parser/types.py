@@ -1,6 +1,8 @@
 import re
 
-from email.utils import parsedate_tz
+import pytz
+from datetime import datetime
+from email.utils import parsedate_tz, mktime_tz
 
 __all__ = [
     'Person',
@@ -74,7 +76,9 @@ class Message(object):
         self.html_body = html_body
 
         if headers.get('Date', None):
-            self.date = parsedate_tz(headers['Date'])
+            date = mktime_tz(parsedate_tz(headers['Date']))
+            date = datetime.fromtimestamp(date, pytz.utc)
+            self.date = date
         else:
             self.date = None
 
