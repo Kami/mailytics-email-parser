@@ -65,7 +65,7 @@ class Message(object):
 
     def __init__(self, uid, subject, sender, recipient, headers, read=None,
                  text_body=None, html_body=None):
-        self.uid = uid
+        self.uid = int(uid) if uid else None
         self.subject = subject
         self.sender = sender
         self.recipient = recipient
