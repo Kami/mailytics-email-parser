@@ -29,7 +29,7 @@ class Person(object):
 
         return klass(name=name, email=email)
 
-    def __str__(self):
+    def __repr__(self):
         return ('<Person email=%s, name=%s>' % (self.email, self.name))
 
 
@@ -41,7 +41,7 @@ class Mailbox(object):
         self.name = name
         self.flags = flags
 
-    def __str__(self):
+    def __repr__(self):
         return ('<Mailbox name=%s, flags=%s>' % (self.name, self.flags))
 
 
@@ -80,7 +80,7 @@ class Message(object):
 
         self.headers = headers
 
-    def __str__(self):
+    def __repr__(self):
         if self.sender:
             sender = self.sender.email
         else:
