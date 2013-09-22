@@ -21,13 +21,18 @@ class Person(object):
 
     @classmethod
     def from_string(klass, string):
-        match = re.match('(.*?)\s?<(.*?)>', string)
-
-        if not match:
+        if not string:
             return None
 
-        name = match.group(1) or None
-        email = match.group(2)
+        match = re.match('(.*?)\s?<(.*?)>', string)
+
+        if match:
+            name = match.group(1) or None
+            email = match.group(2)
+        else:
+            # Assume only email is provided
+            name = None
+            email = string
 
         return klass(name=name, email=email)
 
