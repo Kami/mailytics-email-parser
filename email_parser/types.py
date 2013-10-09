@@ -1,8 +1,6 @@
 import re
 
-import pytz
-from datetime import datetime
-from email.utils import parsedate_tz, mktime_tz
+from email_parser.utils.date import convert_date_str_to_date
 
 __all__ = [
     'Person',
@@ -57,6 +55,7 @@ class Message(object):
     subject = None
     sender = None
     recipient = None
+    date = None
 
     text_body = None
     html_body = None
@@ -81,9 +80,7 @@ class Message(object):
         self.html_body = html_body
 
         if headers.get('Date', None):
-            date = mktime_tz(parsedate_tz(headers['Date']))
-            date = datetime.fromtimestamp(date, pytz.utc)
-            self.date = date
+            self.date = convert_date_str_to_date(date_str=headers['Date'])
         else:
             self.date = None
 
@@ -110,8 +107,15 @@ class IncomingMessage(Message):
     valid_spf_signature = None
 
     def __init__(self, *args, **kwargs):
+        # TODO: parse date and store in UTC
         self.date_sent = kwargs.pop('date_sent')
         self.date_received = kwargs.pop('date_received')
+
+        if self.date_sent:
+            self.date_sent = convert_date_str_to_date(self.date_sent)
+
+        if self.date_received:
+            self.date_received = convert_date_str_to_date(self.date_received)
 
         self.spf_signature = kwargs.pop('spf_signature')
         self.dkim_signature = kwargs.pop('dkim_signature')
@@ -126,4 +130,8 @@ class OutgoingMessage(Message):
 
     def __init__(self, *args, **kwargs):
         self.date_sent = kwargs.pop('date_sent')
+
+        if self.date_sent:
+            self.date_sent = convert_date_str_to_date(self.date_sent)
+
         super(OutgoingMessage, self).__init__(*args, **kwargs)

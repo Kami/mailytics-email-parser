@@ -55,12 +55,8 @@ def build_message(message_type, uid, message, flags=None):
     date_sent = headers.get('Date', None)
     date_received = headers.get('X-Received', None)
 
-    if date_sent:
-        date_sent = parsedate_tz(date_sent)
-
     if date_received:
         date_received = date_received.split('\n')[-1].strip()
-        date_received = parsedate_tz(date_received)
 
     read = None
 
