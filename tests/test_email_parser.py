@@ -22,7 +22,9 @@ class EmailParserTestCase(BaseTestCase):
             ('Tomaz Muraus <tomaz@tomaz.me>',
              ('Tomaz Muraus', 'tomaz@tomaz.me')),
             ('Tomaz <tomaz@tomaz.me>', ('Tomaz', 'tomaz@tomaz.me')),
-            ('<tomaz@tomaz.me>', (None, 'tomaz@tomaz.me'))
+            ('<tomaz@tomaz.me>', (None, 'tomaz@tomaz.me')),
+            ('Tomaz Muraus          <tomaz@tomaz.me>',
+            ('Tomaz Muraus', 'tomaz@tomaz.me')),
         )
 
         for string, expected in values:

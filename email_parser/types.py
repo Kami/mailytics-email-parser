@@ -25,7 +25,10 @@ class Person(object):
         match = re.match('(.*?)\s?<(.*?)>', string)
 
         if match:
-            name = match.group(1) or None
+            if match.group(1):
+                name = match.group(1).strip()
+            else:
+                name = None
             email = match.group(2)
         else:
             # Assume only email is provided
