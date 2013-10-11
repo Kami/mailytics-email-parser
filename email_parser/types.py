@@ -108,8 +108,8 @@ class IncomingMessage(Message):
 
     def __init__(self, *args, **kwargs):
         # TODO: parse date and store in UTC
-        self.date_sent = kwargs.pop('date_sent')
-        self.date_received = kwargs.pop('date_received')
+        self.date_sent = kwargs.pop('date_sent', None)
+        self.date_received = kwargs.pop('date_received', None)
 
         if self.date_sent:
             self.date_sent = convert_date_str_to_date(self.date_sent)
@@ -117,11 +117,11 @@ class IncomingMessage(Message):
         if self.date_received:
             self.date_received = convert_date_str_to_date(self.date_received)
 
-        self.spf_signature = kwargs.pop('spf_signature')
-        self.dkim_signature = kwargs.pop('dkim_signature')
+        self.spf_signature = kwargs.pop('spf_signature', None)
+        self.dkim_signature = kwargs.pop('dkim_signature', None)
 
-        self.valid_spf_signature = kwargs.pop('valid_spf_signature')
-        self.valid_dkim_signature = kwargs.pop('valid_dkim_signature')
+        self.valid_spf_signature = kwargs.pop('valid_spf_signature', None)
+        self.valid_dkim_signature = kwargs.pop('valid_dkim_signature', None)
         super(IncomingMessage, self).__init__(*args, **kwargs)
 
 
